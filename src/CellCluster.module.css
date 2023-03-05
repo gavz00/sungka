@@ -1,0 +1,23 @@
+.p1_cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.p1_cell .cell_container {
+  order: 2;
+}
+.p1_cell .cell_btn {
+  order: 1;
+}
+
+.p2_cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.p2_cell .cell_container {
+  order: 1;
+}
+.p2_cell .cell_btn {
+  order: 2;
+}

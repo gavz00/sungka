@@ -1,0 +1,13 @@
+.board {
+  display: flex;
+}
+
+.board td {
+  border: 1px solid black;
+  width: 70px;
+}
+
+tr {
+  display: flex;
+  flex-direction: row;
+}
