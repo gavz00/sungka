@@ -5,7 +5,7 @@ function Cell(props) {
   const [player, setPlayer] = useState(props.player);
   return (
     <div className={props.className} key={props.index}>
-      <p lassName={"beads_count"}>{beadCount}</p>
+      <p className={"beads_count"}>{beadCount}</p>
       <div className={"beads"}>
         ***
         <br />
