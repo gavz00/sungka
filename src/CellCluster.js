@@ -2,26 +2,41 @@ import Cell from "./Cell";
 import StorageCell from "./StorageCell";
 
 import classes from "./CellCluster.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function CellCluster(props) {
-  const [beadCount, setBeadCount] = useState(6);
+  const [beadCount, setBeadCount] = useState(5);
   const [storedBeads, setStoredBeads] = useState(0);
-  const [playerCells, setPlayerCells] = useState(renderCells(props.player));
+  const [playerCells, setPlayerCells] = useState({
+    player: props.player,
+    cells: [beadCount, beadCount, beadCount, beadCount, beadCount],
+    storageCell: "0",
+  });
 
   function getPlayerBeadsArray(playerCells) {
     props.getPlayerBeadsArray(playerCells);
   }
+  let initCells = renderCells(playerCells);
 
-  getPlayerBeadsArray(playerCells);
+  useEffect(() => {
+    return () => {
+      initCells = renderCells(playerCells);
+    };
+  }, [playerCells.cells]);
 
   function btn_move(index) {
+    let tempCells = playerCells.cells;
+    tempCells[index] = 0;
+    setPlayerCells((prePlayerCells) => ({
+      cells: tempCells,
+      ...prePlayerCells.cells,
+    }));
+    console.log(playerCells);
     props.btn_move(index);
   }
-
-  function renderCells(playStr) {
+  function renderCells(playerCells) {
     let tempPlayer = [];
-    for (let index = 0; index < props.cellCount; index++) {
+    for (let index = 0; index < playerCells.cells.length; index++) {
       tempPlayer.push(
         <td
           className={
@@ -31,9 +46,9 @@ function CellCluster(props) {
         >
           <Cell
             className={classes.cell_container}
-            player={playStr}
+            player={playerCells.player}
             key={index}
-            beadCount={beadCount}
+            beadCount={playerCells.cells[index]}
           />
           <button
             onClick={(e) => {
@@ -52,13 +67,13 @@ function CellCluster(props) {
         <StorageCell player={props.player} storedBeads={storedBeads} />
       </td>
     );
-    if (playStr === "p1") {
+    if (playerCells.player === "p1") {
       tempPlayer.reverse();
     }
     return tempPlayer;
   }
 
-  return <>{playerCells}</>;
+  return <>{initCells}</>;
 }
 
 export default CellCluster;
