@@ -6,37 +6,32 @@ import { useState, useEffect } from "react";
 
 function CellCluster(props) {
   const [beadCount, setBeadCount] = useState(5);
+  const { key, player, cells } = props;
   const [storedBeads, setStoredBeads] = useState(0);
-  const [playerCells, setPlayerCells] = useState({
-    player: props.player,
-    cells: [beadCount, beadCount, beadCount, beadCount, beadCount],
-    storageCell: "0",
-  });
 
-  function getPlayerBeadsArray(playerCells) {
-    props.getPlayerBeadsArray(playerCells);
-  }
-  let initCells = renderCells(playerCells);
+  const [playerCells, setPlayerCells] = useState();
+
+  let initCells = renderCells(player, cells);
 
   useEffect(() => {
     return () => {
-      initCells = renderCells(playerCells);
+      initCells = renderCells(player, cells);
     };
-  }, [playerCells.cells]);
+  }, [cells]);
 
   function btn_move(index) {
-    let tempCells = playerCells.cells;
+    let tempCells = [...cells];
     tempCells[index] = 0;
-    setPlayerCells((prePlayerCells) => ({
+    setPlayerCells((prevPlayerCells) => ({
       cells: tempCells,
-      ...prePlayerCells.cells,
+      ...prevPlayerCells,
     }));
     console.log(playerCells);
-    props.btn_move(index);
+    props.btn_move(index, player, tempCells);
   }
-  function renderCells(playerCells) {
+  function renderCells(player, cells) {
     let tempPlayer = [];
-    for (let index = 0; index < playerCells.cells.length; index++) {
+    for (let index = 0; index < cells.length; index++) {
       tempPlayer.push(
         <td
           className={
@@ -46,9 +41,9 @@ function CellCluster(props) {
         >
           <Cell
             className={classes.cell_container}
-            player={playerCells.player}
+            player={player}
             key={index}
-            beadCount={playerCells.cells[index]}
+            beadCount={cells[index]}
           />
           <button
             onClick={(e) => {
@@ -67,7 +62,7 @@ function CellCluster(props) {
         <StorageCell player={props.player} storedBeads={storedBeads} />
       </td>
     );
-    if (playerCells.player === "p1") {
+    if (player === "p1") {
       tempPlayer.reverse();
     }
     return tempPlayer;
