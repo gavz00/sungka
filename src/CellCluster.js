@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 function CellCluster(props) {
   const [beadCount, setBeadCount] = useState(5);
-  const { key, player, cells } = props;
+  const { key, player, cells, storageCell } = props;
   const [storedBeads, setStoredBeads] = useState(0);
 
   const [playerCells, setPlayerCells] = useState();
@@ -19,15 +19,22 @@ function CellCluster(props) {
     };
   }, [cells]);
 
+  useEffect(() => {
+    return () => {
+      setStoredBeads(storageCell);
+    };
+  }, [storageCell]);
+
   function btn_move(index) {
     let tempCells = [...cells];
+    let tempStoreCell = storageCell;
     tempCells[index] = 0;
     setPlayerCells((prevPlayerCells) => ({
       cells: tempCells,
       ...prevPlayerCells,
     }));
     console.log(playerCells);
-    props.btn_move(index, player, tempCells);
+    props.btn_move(index, player, tempCells, tempStoreCell);
   }
   function renderCells(player, cells) {
     let tempPlayer = [];
@@ -59,12 +66,12 @@ function CellCluster(props) {
     }
     tempPlayer.push(
       <td>
-        <StorageCell player={props.player} storedBeads={storedBeads} />
+        <StorageCell player={player} storedBeads={storageCell} />
       </td>
     );
-    if (player === "p1") {
-      tempPlayer.reverse();
-    }
+    // if (player === "p1") {
+    //   tempPlayer.reverse();
+    // }
     return tempPlayer;
   }
 

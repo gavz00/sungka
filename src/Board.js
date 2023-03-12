@@ -9,17 +9,17 @@ function Board() {
     {
       player: "Player 1",
       beadsInCell: [6, 6, 6, 6, 6],
-      storageCell: "0",
+      storageCell: 0,
     },
     {
       player: "Player 2",
       beadsInCell: [6, 6, 6, 6, 6],
-      storageCell: "0",
+      storageCell: 0,
     },
   ]);
   const [renderBoard, setRenderBoard] = useState();
 
-  function move(id, player, cells) {
+  function move(id, player, cells, storageCell) {
     console.log(player + " Move cell: " + id);
     console.log(cells);
     console.log(board.find((playerSet) => playerSet.player === player));
@@ -36,16 +36,40 @@ function Board() {
     // });
     const updateBoard = board.map((playerSet, i) => {
       let pIindex = board.findIndex((playerSet) => playerSet.player === player);
+      let prevBeads = 0;
       if (pIindex === i) {
+        prevBeads = playerSet.beadsInCell[id];
+        console.log(
+          "Prev beads in cell" + id + ": " + playerSet.beadsInCell[id]
+        );
         playerSet.beadsInCell = cells;
+        playerSet.beadsInCell.forEach((x, i, arr) => {
+          console.log("current [" + pIindex + "]:" + playerSet.beadsInCell);
+
+          if (prevBeads !== 0) {
+            if (i > id) {
+              console.log("[" + i + "]:" + x);
+              if (prevBeads !== 0) {
+                arr[i] += 1;
+              }
+              --prevBeads;
+            }
+          }
+
+          console.log("return [" + i + "]:" + x);
+          return x;
+        });
         console.log(playerSet);
       }
+      if (prevBeads > 0) {
+        playerSet.storageCell += 1;
+      }
+
       return playerSet;
     });
     console.log(updateBoard);
 
     setBoard(updateBoard, ...board);
-    console.log(board);
   }
 
   function getPlayerBeadsArray(cluster) {
@@ -64,6 +88,7 @@ function Board() {
                 key={playerSet.player}
                 player={playerSet.player}
                 cells={playerSet.beadsInCell}
+                storageCell={playerSet.storageCell}
                 btn_move={move}
                 getPlayerBeadsArray={getPlayerBeadsArray}
               />
